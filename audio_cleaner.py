@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.0.4"
+VERSION = "1.0.3"
 
 import os
 import warnings
@@ -218,5 +218,3 @@ class AudioCleaner:
 
 if __name__ == "__main__":
     AudioCleaner().run()
-
-
