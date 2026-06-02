@@ -11,6 +11,11 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
+import os
+import warnings
+os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
+warnings.filterwarnings("ignore")
+
 import sounddevice as sd
 import numpy as np
 import threading
