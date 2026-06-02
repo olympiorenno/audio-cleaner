@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.0.4"
+VERSION = "1.0.5"
 
 import os
 import warnings
@@ -62,7 +62,11 @@ print(f"Audio Cleaner v{VERSION}")
 print("=" * 40)
 print("Carregando modelo Whisper...")
 model = WhisperModel(WHISPER_MODEL, device=WHISPER_DEVICE, compute_type=COMPUTE_TYPE)
-print(f"Modelo '{WHISPER_MODEL}' carregado em {WHISPER_DEVICE.upper()}!\n")
+print(f"Modelo '{WHISPER_MODEL}' carregado em {WHISPER_DEVICE.upper()}!")
+print("Aquecendo modelo (evita atraso no inicio)...", end="", flush=True)
+import numpy as _np
+list(model.transcribe(_np.zeros(16000, dtype=_np.float32), language=WHISPER_LANGUAGE, vad_filter=False)[0])
+print(" Pronto!\n")
 
 
 def select_devices():
