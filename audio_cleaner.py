@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.1.0"
+VERSION = "1.1.1"
 
 import os
 import warnings
@@ -23,6 +23,7 @@ import numpy as np
 import threading
 import queue
 import time
+from concurrent.futures import ThreadPoolExecutor
 from faster_whisper import WhisperModel
 
 # ─── CONFIGURAÇÕES ────────────────────────────────────────────────────────────
@@ -132,22 +133,45 @@ def mute_segment(audio: np.ndarray, start_s: float, end_s: float, fade_ms: int =
 
 
 
+def transcreve_e_muta(chunk, tics_counter):
+    """Processa um chunk: transcreve e muta vícios. Roda em thread separada."""
+    segments, _ = model.transcribe(
+        chunk,
+        language=WHISPER_LANGUAGE,
+        word_timestamps=True,
+        vad_filter=False,
+    )
+    for seg in segments:
+        if seg.words:
+            for word in seg.words:
+                dur = word.end - word.start
+                if is_tic(word.word, dur):
+                    chunk = mute_segment(chunk, word.start, word.end)
+                    tics_counter[0] += 1
+                    print(f"  [-] '{word.word.strip()}' {dur:.2f}s")
+    return chunk
+
+
 class AudioCleaner:
     def __init__(self):
         self.raw_queue    = queue.Queue()
-        self.clean_queue  = queue.Queue()
+        self.future_queue = queue.Queue()   # fila de futures (processamento paralelo)
         self.running      = False
         self.tics_removed = 0
+
     def capture_callback(self, indata, frames, time_info, status):
         if status:
             print(f"  [captura] {status}")
         self.raw_queue.put(indata[:, 0].copy())
 
     def process_loop(self):
+        """Acumula audio e submete chunks para processamento paralelo."""
         chunk_size = int(CHUNK_SECONDS * SAMPLE_RATE)
         buf = np.array([], dtype=np.float32)
         audio_recebido = False
         t_inicio = time.time()
+        executor = ThreadPoolExecutor(max_workers=2)
+        counter = [0]
 
         while self.running:
             while len(buf) < chunk_size and self.running:
@@ -161,7 +185,7 @@ class AudioCleaner:
                     if not audio_recebido and (time.time() - t_inicio) > 10:
                         print("[AVISO] Nenhum audio recebido apos 10s.")
                         print("  Verifique se o browser esta usando 'CABLE Input' como saida.")
-                        t_inicio = time.time()  # reseta para nao spammar
+                        t_inicio = time.time()
                     continue
 
             if not self.running:
@@ -170,23 +194,12 @@ class AudioCleaner:
             chunk = buf[:chunk_size].copy()
             buf   = buf[chunk_size:]
 
-            segments, _ = model.transcribe(
-                chunk,
-                language=WHISPER_LANGUAGE,
-                word_timestamps=True,
-                vad_filter=False,
-            )
+            # Submete para processamento em paralelo (nao bloqueia)
+            future = executor.submit(transcreve_e_muta, chunk, counter)
+            self.future_queue.put(future)
 
-            for seg in segments:
-                if seg.words:
-                    for word in seg.words:
-                        dur = word.end - word.start
-                        if is_tic(word.word, dur):
-                            chunk = mute_segment(chunk, word.start, word.end)
-                            self.tics_removed += 1
-                            print(f"  [-] '{word.word.strip()}' {dur:.2f}s")
-
-            self.clean_queue.put(chunk)
+        self.tics_removed = counter[0]
+        executor.shutdown(wait=False)
 
     def playback_loop(self, output_device):
         silence = np.zeros(int(0.05 * SAMPLE_RATE), dtype=np.float32)
@@ -199,22 +212,22 @@ class AudioCleaner:
         )
         stream.start()
 
-        # Pre-carrega 2 chunks antes de comecar a tocar
+        # Pre-carrega 2 futures antes de comecar a tocar
         print("Aguardando buffer inicial...", flush=True)
-        chunks = []
-        while len(chunks) < 2:
+        futures = []
+        while len(futures) < 2:
             try:
-                chunks.append(self.clean_queue.get(timeout=1.0))
+                futures.append(self.future_queue.get(timeout=1.0))
             except queue.Empty:
                 continue
         print("Buffer pronto! Tocando...\n", flush=True)
-        for c in chunks:
-            stream.write(c)
+        for f in futures:
+            stream.write(f.result())
 
         while self.running:
             try:
-                audio = self.clean_queue.get(timeout=0.05)
-                stream.write(audio)
+                future = self.future_queue.get(timeout=0.05)
+                stream.write(future.result())
             except queue.Empty:
                 stream.write(silence)
 
@@ -230,7 +243,7 @@ class AudioCleaner:
 
         self.running = True
 
-        threading.Thread(target=self.process_loop, daemon=True).start()
+        threading.Thread(target=self.process_loop,  daemon=True).start()
         threading.Thread(target=self.playback_loop, args=(output_dev,), daemon=True).start()
 
         with sd.InputStream(
