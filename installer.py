@@ -107,20 +107,22 @@ def install_dependencies():
 
 
 def create_shortcut():
-    desktop = os.path.join(os.environ["USERPROFILE"], "Desktop")
+    desktop  = os.path.join(os.environ["USERPROFILE"], "Desktop")
     shortcut = os.path.join(desktop, "Audio Cleaner.lnk")
     target   = os.path.join(INSTALL_DIR, "run.bat")
 
-    ps_cmd = f"""
-$ws = New-Object -ComObject WScript.Shell
-$s  = $ws.CreateShortcut('{shortcut}')
-$s.TargetPath  = '{target}'
-$s.WorkingDirectory = '{INSTALL_DIR}'
-$s.IconLocation = 'shell32.dll,168'
-$s.Save()
-"""
-    subprocess.run(["powershell", "-Command", ps_cmd], check=True)
-    log(f"  Atalho criado no Desktop!")
+    # Usa script temporário para evitar problemas com aspas/barras no PowerShell
+    ps_script = os.path.join(tempfile.gettempdir(), "create_shortcut.ps1")
+    with open(ps_script, "w", encoding="utf-8") as f:
+        f.write(f'$ws = New-Object -ComObject WScript.Shell\n')
+        f.write(f'$s = $ws.CreateShortcut("{shortcut}")\n')
+        f.write(f'$s.TargetPath = "{target}"\n')
+        f.write(f'$s.WorkingDirectory = "{INSTALL_DIR}"\n')
+        f.write(f'$s.IconLocation = "shell32.dll,168"\n')
+        f.write(f'$s.Save()\n')
+
+    subprocess.run(["powershell", "-ExecutionPolicy", "Bypass", "-File", ps_script], check=True)
+    log("  Atalho criado no Desktop!")
 
 
 def main():
