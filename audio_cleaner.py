@@ -30,15 +30,29 @@ E_LONGO_MIN_SEGUNDOS = 0.4
 
 SAMPLE_RATE     = 16000
 CHUNK_SECONDS   = 2.0
-WHISPER_MODEL   = "tiny"
-WHISPER_DEVICE  = "cpu"
+WHISPER_MODEL    = "tiny"
 WHISPER_LANGUAGE = "pt"
 
 # ─── SETUP ────────────────────────────────────────────────────────────────────
 
+# Detecta automaticamente se CUDA está disponível
+def detect_device():
+    try:
+        import ctranslate2
+        providers = ctranslate2.get_supported_compute_types("cuda")
+        if providers:
+            print("GPU NVIDIA detectada! Usando CUDA.")
+            return "cuda", "float16"
+    except Exception:
+        pass
+    print("CUDA não disponível. Usando CPU.")
+    return "cpu", "int8"
+
+WHISPER_DEVICE, COMPUTE_TYPE = detect_device()
+
 print("Carregando modelo Whisper...")
-model = WhisperModel(WHISPER_MODEL, device=WHISPER_DEVICE, compute_type="int8")
-print(f"Modelo '{WHISPER_MODEL}' carregado!\n")
+model = WhisperModel(WHISPER_MODEL, device=WHISPER_DEVICE, compute_type=COMPUTE_TYPE)
+print(f"Modelo '{WHISPER_MODEL}' carregado em {WHISPER_DEVICE.upper()}!\n")
 
 
 def select_devices():
