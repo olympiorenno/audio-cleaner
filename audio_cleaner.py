@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.0.6"
+VERSION = "1.0.7"
 
 import os
 import warnings
@@ -131,17 +131,35 @@ def mute_segment(audio: np.ndarray, start_s: float, end_s: float, fade_ms: int =
     return audio
 
 
+SILENCE_THRESHOLD = 0.001  # RMS abaixo disso = silencio
+
 class AudioCleaner:
     def __init__(self):
         self.raw_queue    = queue.Queue()
         self.clean_queue  = queue.Queue()
         self.running      = False
         self.tics_removed = 0
+        self.pausado      = False
 
     def capture_callback(self, indata, frames, time_info, status):
         if status:
             print(f"  [captura] {status}")
-        self.raw_queue.put(indata[:, 0].copy())
+        chunk = indata[:, 0].copy()
+        rms = float(np.sqrt(np.mean(chunk ** 2)))
+
+        if rms < SILENCE_THRESHOLD:
+            if not self.pausado:
+                self.pausado = True
+                # Limpa buffers para parar o audio imediatamente
+                while not self.raw_queue.empty():
+                    try: self.raw_queue.get_nowait()
+                    except: break
+                while not self.clean_queue.empty():
+                    try: self.clean_queue.get_nowait()
+                    except: break
+        else:
+            self.pausado = False
+            self.raw_queue.put(chunk)
 
     def process_loop(self):
         chunk_size = int(CHUNK_SECONDS * SAMPLE_RATE)
