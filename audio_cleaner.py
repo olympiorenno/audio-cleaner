@@ -11,13 +11,6 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.0.3"
-
-import os
-import warnings
-os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
-warnings.filterwarnings("ignore")
-
 import sounddevice as sd
 import numpy as np
 import threading
@@ -42,13 +35,12 @@ WHISPER_LANGUAGE = "pt"
 
 # ─── SETUP ────────────────────────────────────────────────────────────────────
 
-# Detecta automaticamente se CUDA está disponível e funcional
+# Detecta automaticamente se CUDA está disponível
 def detect_device():
     try:
         import ctranslate2
-        # Tenta criar um modelo mínimo na GPU para confirmar que funciona
-        types = ctranslate2.get_supported_compute_types("cuda")
-        if "float16" in types or "int8_float16" in types:
+        providers = ctranslate2.get_supported_compute_types("cuda")
+        if providers:
             print("GPU NVIDIA detectada! Usando CUDA.")
             return "cuda", "float16"
     except Exception:
@@ -58,8 +50,6 @@ def detect_device():
 
 WHISPER_DEVICE, COMPUTE_TYPE = detect_device()
 
-print(f"Audio Cleaner v{VERSION}")
-print("=" * 40)
 print("Carregando modelo Whisper...")
 model = WhisperModel(WHISPER_MODEL, device=WHISPER_DEVICE, compute_type=COMPUTE_TYPE)
 print(f"Modelo '{WHISPER_MODEL}' carregado em {WHISPER_DEVICE.upper()}!\n")
@@ -124,22 +114,12 @@ class AudioCleaner:
     def process_loop(self):
         chunk_size = int(CHUNK_SECONDS * SAMPLE_RATE)
         buf = np.array([], dtype=np.float32)
-        audio_recebido = False
-        t_inicio = time.time()
 
         while self.running:
             while len(buf) < chunk_size and self.running:
                 try:
-                    chunk = self.raw_queue.get(timeout=0.1)
-                    if not audio_recebido:
-                        audio_recebido = True
-                        print("Audio recebido! Processando...\n")
-                    buf = np.concatenate([buf, chunk])
+                    buf = np.concatenate([buf, self.raw_queue.get(timeout=0.1)])
                 except queue.Empty:
-                    if not audio_recebido and (time.time() - t_inicio) > 10:
-                        print("[AVISO] Nenhum audio recebido apos 10s.")
-                        print("  Verifique se o browser esta usando 'CABLE Input' como saida.")
-                        t_inicio = time.time()  # reseta para nao spammar
                     continue
 
             if not self.running:
