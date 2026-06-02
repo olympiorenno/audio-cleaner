@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.0.9"
+VERSION = "1.1.0"
 
 import os
 import warnings
@@ -36,7 +36,7 @@ TICS = [
 E_LONGO_MIN_SEGUNDOS = 0.4
 
 SAMPLE_RATE     = 16000
-CHUNK_SECONDS   = 2.0
+CHUNK_SECONDS   = 3.0
 WHISPER_MODEL    = "tiny"
 WHISPER_LANGUAGE = "pt"
 
@@ -198,6 +198,18 @@ class AudioCleaner:
             latency="low",
         )
         stream.start()
+
+        # Pre-carrega 2 chunks antes de comecar a tocar
+        print("Aguardando buffer inicial...", flush=True)
+        chunks = []
+        while len(chunks) < 2:
+            try:
+                chunks.append(self.clean_queue.get(timeout=1.0))
+            except queue.Empty:
+                continue
+        print("Buffer pronto! Tocando...\n", flush=True)
+        for c in chunks:
+            stream.write(c)
 
         while self.running:
             try:
