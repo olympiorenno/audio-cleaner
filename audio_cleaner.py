@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.0.7"
+VERSION = "1.0.8"
 
 import os
 import warnings
@@ -131,7 +131,8 @@ def mute_segment(audio: np.ndarray, start_s: float, end_s: float, fade_ms: int =
     return audio
 
 
-SILENCE_THRESHOLD = 0.001  # RMS abaixo disso = silencio
+SILENCE_THRESHOLD = 0.0005  # RMS abaixo disso = silencio
+SILENCE_DURATION  = 1.5     # segundos de silencio antes de limpar buffer
 
 class AudioCleaner:
     def __init__(self):
@@ -139,7 +140,8 @@ class AudioCleaner:
         self.clean_queue  = queue.Queue()
         self.running      = False
         self.tics_removed = 0
-        self.pausado      = False
+        self.pausado        = False
+        self.silence_start  = None
 
     def capture_callback(self, indata, frames, time_info, status):
         if status:
@@ -148,9 +150,11 @@ class AudioCleaner:
         rms = float(np.sqrt(np.mean(chunk ** 2)))
 
         if rms < SILENCE_THRESHOLD:
-            if not self.pausado:
+            if self.silence_start is None:
+                self.silence_start = time.time()
+            elif not self.pausado and (time.time() - self.silence_start) > SILENCE_DURATION:
                 self.pausado = True
-                # Limpa buffers para parar o audio imediatamente
+                # Limpa buffers apos silencio prolongado (video pausado)
                 while not self.raw_queue.empty():
                     try: self.raw_queue.get_nowait()
                     except: break
@@ -158,7 +162,8 @@ class AudioCleaner:
                     try: self.clean_queue.get_nowait()
                     except: break
         else:
-            self.pausado = False
+            self.pausado       = False
+            self.silence_start = None
             self.raw_queue.put(chunk)
 
     def process_loop(self):
