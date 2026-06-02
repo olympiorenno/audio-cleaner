@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.2.5"
+VERSION = "1.2.6"
 
 import os
 import warnings
@@ -31,7 +31,10 @@ from faster_whisper import WhisperModel
 # ─── CONFIGURAÇÕES ────────────────────────────────────────────────────────────
 
 TICS = [
-    "né", "né?", "ne", "ne?",  # sempre remove, independente da duracao
+    "né", "né?", "ne", "ne?",  # vicio confirmado
+    "então", "então,",          # vicio no inicio de frase
+    "pessoal", "pessoal,",      # vicio de oratoria
+    "ok", "ok?",                # vicio de confirmacao
 ]
 
 E_LONGO_MIN_SEGUNDOS = 0.40  # so remove "e/é" genuinamente longo (hesitacao > 0.40s)
