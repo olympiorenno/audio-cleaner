@@ -109,10 +109,14 @@ def install_dependencies():
 def download_whisper_model():
     log("  Baixando modelo Whisper tiny (~75MB)...")
     log("  (isso evita espera na primeira vez que usar)")
+    # Salva em pasta compartilhada para todos os usuarios
+    env = os.environ.copy()
+    env["HF_HOME"] = r"C:\ProgramData\AudioCleaner\models"
+    os.makedirs(r"C:\ProgramData\AudioCleaner\models", exist_ok=True)
     subprocess.run([
         "python", "-c",
         "from faster_whisper import WhisperModel; WhisperModel('tiny', device='cpu', compute_type='int8')"
-    ], check=True)
+    ], check=True, env=env)
     log("  Modelo Whisper baixado!")
 
 

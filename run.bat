@@ -1,6 +1,9 @@
 @echo off
 cd /d "%~dp0"
 
+REM ── Usa pasta compartilhada para o modelo Whisper ─────────────
+set HF_HOME=C:\ProgramData\AudioCleaner\models
+
 REM ── Verifica atualizacao automatica ──────────────────────────
 echo Verificando atualizacoes...
 powershell -Command "try { $r = Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/olympiorenno/audio-cleaner/main/audio_cleaner.py' -UseBasicParsing -TimeoutSec 5; if ($r.StatusCode -eq 200) { $r.Content | Set-Content -Path '%~dp0audio_cleaner.py' -Encoding UTF8; Write-Host '  Atualizado!' } } catch { Write-Host '  Sem internet, usando versao local.' }"
