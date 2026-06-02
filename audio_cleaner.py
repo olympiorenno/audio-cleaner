@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.1.6"
+VERSION = "1.1.7"
 
 import os
 import warnings
@@ -35,7 +35,7 @@ TICS = [
 ]
 
 E_LONGO_MIN_SEGUNDOS = 0.05   # threshold baixo para pegar todos os "é"
-E_MUTE_EXTRA        = 0.4    # estende o mute alem do timestamp (cobre o "éééé" completo)
+E_MUTE_EXTRA        = 0.2    # estende o mute alem do timestamp
 
 SAMPLE_RATE     = 16000
 CHUNK_SECONDS   = 3.0
