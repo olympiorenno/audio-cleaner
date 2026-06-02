@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.0.5"
+VERSION = "1.0.6"
 
 import os
 import warnings
@@ -63,10 +63,28 @@ print("=" * 40)
 print("Carregando modelo Whisper...")
 model = WhisperModel(WHISPER_MODEL, device=WHISPER_DEVICE, compute_type=COMPUTE_TYPE)
 print(f"Modelo '{WHISPER_MODEL}' carregado em {WHISPER_DEVICE.upper()}!")
-print("Aquecendo modelo (evita atraso no inicio)...", end="", flush=True)
+print("Aquecendo modelo (~12s, so na primeira vez do dia)...")
+
 import numpy as _np
-list(model.transcribe(_np.zeros(16000, dtype=_np.float32), language=WHISPER_LANGUAGE, vad_filter=False)[0])
-print(" Pronto!\n")
+import threading as _threading
+
+_warmup_done = False
+def _spinner():
+    import sys
+    chars = ["⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"]
+    i = 0
+    while not _warmup_done:
+        print(f"\r  {chars[i % len(chars)]} aguarde...", end="", flush=True)
+        time.sleep(0.1)
+        i += 1
+    print(f"\r  Pronto!          ")
+
+_t = _threading.Thread(target=_spinner, daemon=True)
+_t.start()
+list(model.transcribe(_np.random.randn(16000).astype(_np.float32) * 0.01, language=WHISPER_LANGUAGE, vad_filter=False)[0])
+_warmup_done = True
+_t.join()
+print()
 
 
 def select_devices():
