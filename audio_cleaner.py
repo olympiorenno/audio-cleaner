@@ -11,6 +11,8 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
+VERSION = "1.0.3"
+
 import os
 import warnings
 os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
@@ -56,6 +58,8 @@ def detect_device():
 
 WHISPER_DEVICE, COMPUTE_TYPE = detect_device()
 
+print(f"Audio Cleaner v{VERSION}")
+print("=" * 40)
 print("Carregando modelo Whisper...")
 model = WhisperModel(WHISPER_MODEL, device=WHISPER_DEVICE, compute_type=COMPUTE_TYPE)
 print(f"Modelo '{WHISPER_MODEL}' carregado em {WHISPER_DEVICE.upper()}!\n")
