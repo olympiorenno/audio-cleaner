@@ -33,7 +33,7 @@ E_LONGO_MIN = 0.40
 E_MUTE_EXTRA_BEFORE = 0.1
 E_MUTE_EXTRA_AFTER  = 0.3
 SAMPLE_RATE = 16000
-HOST = "localhost"
+HOST = "127.0.0.1"  # IPv4 explicito evita conflito com IPv6
 PORT = 8765
 
 # ── Setup Whisper ──────────────────────────────────────────────────────────────
