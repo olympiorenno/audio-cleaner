@@ -1,4 +1,4 @@
-"""
+﻿"""
 Audio Cleaner - Remove vícios de linguagem em tempo real
 =========================================================
 Requisitos:
@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.0.3"
+VERSION = "1.0.4"
 
 import os
 import warnings
@@ -218,3 +218,4 @@ class AudioCleaner:
 
 if __name__ == "__main__":
     AudioCleaner().run()
+
