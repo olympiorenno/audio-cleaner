@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.2.4"
+VERSION = "1.2.5"
 
 import os
 import warnings
@@ -42,7 +42,7 @@ SAMPLE_RATE     = 16000
 CHUNK_SECONDS   = 4.0    # janela de transcricao
 ADVANCE_SECONDS = 2.0    # avanca so 2s por vez (overlap de 2s entre chunks)
 DEBUG_WORDS     = False  # True = mostra todas as palavras (para diagnostico)
-GRAVAR_AUDIO    = True   # Grava original e limpo para analise (desative apos analise)
+GRAVAR_AUDIO    = False  # True = grava WAVs para analise
 WHISPER_MODEL    = "tiny"
 WHISPER_LANGUAGE = "pt"
 
