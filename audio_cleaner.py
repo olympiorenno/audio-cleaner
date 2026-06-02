@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.2.2"
+VERSION = "1.2.3"
 
 import os
 import warnings
@@ -34,7 +34,7 @@ TICS = [
     "né", "né?", "ne", "ne?",  # sempre remove, independente da duracao
 ]
 
-E_LONGO_MIN_SEGUNDOS = 0.35  # so remove "é" genuinamente longo (hesitacao)
+E_LONGO_MIN_SEGUNDOS = 0.55  # so remove "e/é" genuinamente longo (hesitacao > 0.55s)
 E_MUTE_EXTRA_AFTER  = 0.3    # estende mute DEPOIS (cobre o som completo)
 E_MUTE_EXTRA_BEFORE = 0.1    # estende mute ANTES
 
