@@ -1,4 +1,4 @@
-﻿"""
+"""
 Audio Cleaner - Remove vícios de linguagem em tempo real
 =========================================================
 Requisitos:
@@ -218,4 +218,5 @@ class AudioCleaner:
 
 if __name__ == "__main__":
     AudioCleaner().run()
+
 
