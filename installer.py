@@ -30,6 +30,7 @@ def run_as_admin():
     ctypes.windll.shell32.ShellExecuteW(
         None, "runas", sys.executable, " ".join(sys.argv), None, 1
     )
+    input("Uma nova janela foi aberta com permissao de administrador.\nPressione Enter para fechar esta...")
     sys.exit()
 
 
