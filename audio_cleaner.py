@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.1.8"
+VERSION = "1.1.9"
 
 import os
 import warnings
@@ -39,7 +39,8 @@ E_MUTE_EXTRA_AFTER  = 0.2    # estende mute DEPOIS do timestamp
 E_MUTE_EXTRA_BEFORE = 0.5    # estende mute ANTES do timestamp (cobre inicio do eeee)
 
 SAMPLE_RATE     = 16000
-CHUNK_SECONDS   = 3.0
+CHUNK_SECONDS   = 4.0    # janela de transcricao
+ADVANCE_SECONDS = 2.0    # avanca so 2s por vez (overlap de 2s entre chunks)
 DEBUG_WORDS     = False  # True = mostra todas as palavras (para diagnostico)
 WHISPER_MODEL    = "tiny"
 WHISPER_LANGUAGE = "pt"
@@ -135,8 +136,11 @@ def mute_segment(audio: np.ndarray, start_s: float, end_s: float, fade_ms: int =
 
 
 
-def transcreve_e_muta(chunk, tics_counter):
-    """Processa um chunk: transcreve e muta vícios. Roda em thread separada."""
+def transcreve_e_muta(chunk, tics_counter, play_size=None):
+    """Processa um chunk: transcreve e muta vícios. Retorna só a parte a tocar."""
+    if play_size is None:
+        play_size = len(chunk)
+
     segments, _ = model.transcribe(
         chunk,
         language=WHISPER_LANGUAGE,
@@ -152,7 +156,6 @@ def transcreve_e_muta(chunk, tics_counter):
                 if is_tic(word.word, dur):
                     w = word.word.strip().lower().rstrip(".,!?;:-")
                     if w in ("é","e","ee","éé","ée","e...","é...","eee","ééé","eh"):
-                        # Estende antes E depois para cobrir o eeee completo
                         start = max(0, word.start - E_MUTE_EXTRA_BEFORE)
                         end   = word.end + E_MUTE_EXTRA_AFTER
                     else:
@@ -161,7 +164,9 @@ def transcreve_e_muta(chunk, tics_counter):
                     chunk = mute_segment(chunk, start, end)
                     tics_counter[0] += 1
                     print(f"  [-] '{word.word.strip()}' {dur:.2f}s  <<< REMOVIDO")
-    return chunk
+
+    # Retorna apenas a parte nova (sem overlap)
+    return chunk[:play_size]
 
 
 class AudioCleaner:
@@ -204,11 +209,13 @@ class AudioCleaner:
             if not self.running:
                 break
 
+            advance_size = int(ADVANCE_SECONDS * SAMPLE_RATE)
             chunk = buf[:chunk_size].copy()
-            buf   = buf[chunk_size:]
+            buf   = buf[advance_size:]   # avanca so ADVANCE_SECONDS
 
-            # Submete para processamento em paralelo (nao bloqueia)
-            future = executor.submit(transcreve_e_muta, chunk, counter)
+            # Submete apenas a parte nova (ADVANCE_SECONDS) para tocar
+            # mas transcreve o chunk completo (CHUNK_SECONDS) para contexto
+            future = executor.submit(transcreve_e_muta, chunk, counter, advance_size)
             self.future_queue.put(future)
 
         self.tics_removed = counter[0]
