@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.1.9"
+VERSION = "1.2.0"
 
 import os
 import warnings
@@ -23,6 +23,8 @@ import numpy as np
 import threading
 import queue
 import time
+import wave
+import os
 from concurrent.futures import ThreadPoolExecutor
 from faster_whisper import WhisperModel
 
@@ -42,6 +44,7 @@ SAMPLE_RATE     = 16000
 CHUNK_SECONDS   = 4.0    # janela de transcricao
 ADVANCE_SECONDS = 2.0    # avanca so 2s por vez (overlap de 2s entre chunks)
 DEBUG_WORDS     = False  # True = mostra todas as palavras (para diagnostico)
+GRAVAR_AUDIO    = True   # Grava original e limpo para analise (desative apos analise)
 WHISPER_MODEL    = "tiny"
 WHISPER_LANGUAGE = "pt"
 
@@ -172,14 +175,19 @@ def transcreve_e_muta(chunk, tics_counter, play_size=None):
 class AudioCleaner:
     def __init__(self):
         self.raw_queue    = queue.Queue()
-        self.future_queue = queue.Queue()   # fila de futures (processamento paralelo)
+        self.future_queue = queue.Queue()
         self.running      = False
         self.tics_removed = 0
+        self._original_buf = []
+        self._clean_buf    = []
 
     def capture_callback(self, indata, frames, time_info, status):
         if status:
             print(f"  [captura] {status}")
-        self.raw_queue.put(indata[:, 0].copy())
+        chunk = indata[:, 0].copy()
+        if GRAVAR_AUDIO:
+            self._original_buf.append(chunk)
+        self.raw_queue.put(chunk)
 
     def process_loop(self):
         """Acumula audio e submete chunks para processamento paralelo."""
@@ -247,12 +255,35 @@ class AudioCleaner:
         while self.running:
             try:
                 future = self.future_queue.get(timeout=0.05)
-                stream.write(future.result())
+                audio = future.result()
+                if GRAVAR_AUDIO:
+                    self._clean_buf.append(audio.copy())
+                stream.write(audio)
             except queue.Empty:
                 stream.write(silence)
 
         stream.stop()
         stream.close()
+
+    def _salvar_gravacoes(self):
+        pasta = os.path.dirname(os.path.abspath(__file__))
+        def salvar_wav(buf, nome):
+            if not buf:
+                return
+            dados = np.concatenate(buf)
+            dados_int = (dados * 32767).astype(np.int16)
+            caminho = os.path.join(pasta, nome)
+            with wave.open(caminho, 'w') as f:
+                f.setnchannels(1)
+                f.setsampwidth(2)
+                f.setframerate(SAMPLE_RATE)
+                f.writeframes(dados_int.tobytes())
+            print(f"  Salvo: {caminho}")
+
+        print("\nSalvando gravacoes...")
+        salvar_wav(self._original_buf, "gravacao_original.wav")
+        salvar_wav(self._clean_buf,    "gravacao_limpa.wav")
+        print("Pronto! Abra a pasta para ver os arquivos.")
 
     def run(self):
         input_dev, output_dev = select_devices()
@@ -280,8 +311,11 @@ class AudioCleaner:
                     n = self._counter[0] if hasattr(self, '_counter') else self.tics_removed
                     print(f"[Status] Vícios removidos: {n}")
             except KeyboardInterrupt:
-                print(f"\nEncerrando... Total: {self.tics_removed} vícios removidos.")
+                n = self._counter[0] if hasattr(self, '_counter') else self.tics_removed
+                print(f"\nEncerrando... Total: {n} vícios removidos.")
                 self.running = False
+                if GRAVAR_AUDIO:
+                    self._salvar_gravacoes()
 
 
 if __name__ == "__main__":
