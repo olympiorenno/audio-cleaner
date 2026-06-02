@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.2.0"
+VERSION = "1.2.1"
 
 import os
 import warnings
@@ -31,14 +31,12 @@ from faster_whisper import WhisperModel
 # ─── CONFIGURAÇÕES ────────────────────────────────────────────────────────────
 
 TICS = [
-    "né", "né?", "certo", "certo?", "então", "tipo", "assim",
-    "tá", "tá?", "ok", "hmm", "ahm", "ahn", "eh", "é isso",
-    "entendeu", "entendeu?", "compreenderam", "pessoal"
+    "né", "né?",   # vicio claro e frequente
 ]
 
-E_LONGO_MIN_SEGUNDOS = 0.05   # threshold baixo para pegar todos os "é"
-E_MUTE_EXTRA_AFTER  = 0.2    # estende mute DEPOIS do timestamp
-E_MUTE_EXTRA_BEFORE = 0.5    # estende mute ANTES do timestamp (cobre inicio do eeee)
+E_LONGO_MIN_SEGUNDOS = 0.35  # so remove "é" genuinamente longo (hesitacao)
+E_MUTE_EXTRA_AFTER  = 0.15   # estende mute DEPOIS do timestamp
+E_MUTE_EXTRA_BEFORE = 0.15   # estende mute ANTES do timestamp
 
 SAMPLE_RATE     = 16000
 CHUNK_SECONDS   = 4.0    # janela de transcricao
