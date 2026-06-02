@@ -14,22 +14,36 @@ IF %ERRORLEVEL% NEQ 0 (
     exit /b
 )
 
-REM ── 1. Verifica Python ────────────────────────────────────────────────────────
+REM ── 1. Verifica e instala Python ─────────────────────────────────────────────
 echo [1/4] Verificando Python...
 python --version >nul 2>&1
 IF %ERRORLEVEL% NEQ 0 (
-    echo.
-    echo [ERRO] Python nao encontrado!
-    echo.
-    echo Instale o Python antes de continuar:
-    echo  1. Acesse: https://python.org/downloads
-    echo  2. Baixe e instale marcando "Add Python to PATH"
-    echo  3. Execute este setup.bat novamente
-    echo.
-    pause
-    exit /b 1
+    echo Python nao encontrado. Baixando instalador...
+    powershell -Command "Invoke-WebRequest -Uri 'https://www.python.org/ftp/python/3.13.3/python-3.13.3-amd64.exe' -OutFile '%TEMP%\python_installer.exe' -UseBasicParsing"
+
+    IF NOT EXIST "%TEMP%\python_installer.exe" (
+        echo [ERRO] Falha ao baixar Python. Verifique sua conexao.
+        pause
+        exit /b 1
+    )
+
+    echo Instalando Python...
+    "%TEMP%\python_installer.exe" /quiet InstallAllUsers=0 PrependPath=1 Include_launcher=1
+
+    REM Atualiza PATH da sessao atual
+    FOR /F "tokens=*" %%P IN ('powershell -Command "[System.Environment]::GetEnvironmentVariable(\"PATH\", \"User\")"') DO SET "PATH=%%P;%PATH%"
+
+    python --version >nul 2>&1
+    IF %ERRORLEVEL% NEQ 0 (
+        echo [ERRO] Instalacao do Python falhou.
+        echo Instale manualmente em: https://python.org/downloads
+        pause
+        exit /b 1
+    )
+    echo [OK] Python instalado com sucesso.
+) ELSE (
+    FOR /F "tokens=*" %%V IN ('python --version 2^>^&1') DO echo [OK] %%V encontrado.
 )
-FOR /F "tokens=*" %%V IN ('python --version 2^>^&1') DO echo [OK] %%V encontrado.
 
 REM ── 2. Desativa alias Python da Microsoft Store ───────────────────────────────
 echo.
