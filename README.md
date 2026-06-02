@@ -25,7 +25,7 @@ Browser → VB-Audio Virtual Cable → Audio Cleaner → Fones/Speakers
 ## 🖥️ Requisitos
 
 - Windows 10/11
-- Python 3.8+ → [python.org/downloads](https://python.org/downloads) *(marque "Add Python to PATH")*
+- Python 3.8+ → [python.org/downloads](https://python.org/downloads)
 - [VB-Audio Virtual Cable](https://vb-audio.com/Cable/) (gratuito)
 - GPU NVIDIA opcional (mais rápido, mas não obrigatório)
 
@@ -33,21 +33,25 @@ Browser → VB-Audio Virtual Cable → Audio Cleaner → Fones/Speakers
 
 ## 🚀 Instalação
 
-**1. Clone ou baixe o projeto**
+**1. Instale o Python**
+- Baixe em [python.org/downloads](https://python.org/downloads)
+- ⚠️ Marque **"Add Python to PATH"** durante a instalação
+- Após instalar, vá em `Configurações → Aplicativos → Aliases de execução do aplicativo` e **desative** `python.exe` e `python3.exe` da Microsoft Store
+
+**2. Instale o VB-Audio Virtual Cable**
+- Baixe em [vb-audio.com/Cable](https://vb-audio.com/Cable/)
+- Execute `VBCABLE_Setup_x64.exe` como **Administrador**
+- **Reinicie o PC**
+
+**3. Baixe o projeto**
 ```bash
 git clone https://github.com/olympiorenno/audio-cleaner.git
-cd audio-cleaner
 ```
 Ou clique em **Code → Download ZIP** e extraia.
 
-**2. Instale as dependências**
+**4. Instale as dependências**
 
 Dê dois cliques em **`install.bat`** — ele instala tudo automaticamente.
-
-**3. Instale o VB-Audio Virtual Cable**
-- Baixe em [vb-audio.com/Cable](https://vb-audio.com/Cable/)
-- Execute `VBCABLE_Setup_x64.exe` como **Administrador**
-- Reinicie o PC
 
 ---
 
