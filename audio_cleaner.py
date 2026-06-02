@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.2.6"
+VERSION = "1.2.7"
 
 import os
 import warnings
@@ -291,7 +291,9 @@ class AudioCleaner:
         print(f"Vícios : {', '.join(TICS)}")
         print(f"'é' longo: > {E_LONGO_MIN_SEGUNDOS}s")
         print(f"Atraso : ~{CHUNK_SECONDS:.0f}s\n")
-        print("Iniciando... Pressione Ctrl+C para parar.\n")
+        print("Iniciando... Pressione Ctrl+C para parar.")
+        print("IMPORTANTE: sempre use Ctrl+C para encerrar!")
+        print("            Fechar a janela sem Ctrl+C deixa audio vazando.\n")
 
         self.running = True
 
