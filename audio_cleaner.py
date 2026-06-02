@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.1.7"
+VERSION = "1.1.8"
 
 import os
 import warnings
@@ -35,7 +35,8 @@ TICS = [
 ]
 
 E_LONGO_MIN_SEGUNDOS = 0.05   # threshold baixo para pegar todos os "é"
-E_MUTE_EXTRA        = 0.2    # estende o mute alem do timestamp
+E_MUTE_EXTRA_AFTER  = 0.2    # estende mute DEPOIS do timestamp
+E_MUTE_EXTRA_BEFORE = 0.5    # estende mute ANTES do timestamp (cobre inicio do eeee)
 
 SAMPLE_RATE     = 16000
 CHUNK_SECONDS   = 3.0
@@ -150,9 +151,14 @@ def transcreve_e_muta(chunk, tics_counter):
                     print(f"  [w] '{word.word.strip()}' {dur:.2f}s")
                 if is_tic(word.word, dur):
                     w = word.word.strip().lower().rstrip(".,!?;:-")
-                    # Para "é" estende o mute para cobrir o som completo
-                    extra = E_MUTE_EXTRA if w in ("é","e","ee","éé","ée","e...","é...","eee","ééé","eh") else 0
-                    chunk = mute_segment(chunk, word.start, word.end + extra)
+                    if w in ("é","e","ee","éé","ée","e...","é...","eee","ééé","eh"):
+                        # Estende antes E depois para cobrir o eeee completo
+                        start = max(0, word.start - E_MUTE_EXTRA_BEFORE)
+                        end   = word.end + E_MUTE_EXTRA_AFTER
+                    else:
+                        start = word.start
+                        end   = word.end
+                    chunk = mute_segment(chunk, start, end)
                     tics_counter[0] += 1
                     print(f"  [-] '{word.word.strip()}' {dur:.2f}s  <<< REMOVIDO")
     return chunk
