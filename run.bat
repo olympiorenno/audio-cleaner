@@ -4,8 +4,8 @@ cd /d "%~dp0"
 REM ── Usa pasta compartilhada para o modelo Whisper ─────────────
 set HF_HOME=C:\ProgramData\AudioCleaner\models
 
-REM ── Atualiza em segundo plano (nao bloqueia o inicio) ─────────
-start /b powershell -WindowStyle Hidden -Command "try { $r = Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/olympiorenno/audio-cleaner/main/audio_cleaner.py' -UseBasicParsing -TimeoutSec 5; $r.Content | Set-Content -Path '%~dp0audio_cleaner.py' -Encoding UTF8 } catch {}"
+REM ── Atualiza audio_cleaner.py e run.bat em segundo plano ──────
+start /b powershell -WindowStyle Hidden -Command "try { $base = 'https://raw.githubusercontent.com/olympiorenno/audio-cleaner/main'; $py = Invoke-WebRequest -Uri \"$base/audio_cleaner.py\" -UseBasicParsing -TimeoutSec 5; $py.Content | Set-Content -Path '%~dp0audio_cleaner.py' -Encoding UTF8; $bat = Invoke-WebRequest -Uri \"$base/run.bat\" -UseBasicParsing -TimeoutSec 5; $bat.Content | Set-Content -Path '%~dp0run.bat' -Encoding UTF8 } catch {}"
 
 REM ── Encontra Python e roda imediatamente ──────────────────────
 python -c "import sounddevice" >nul 2>&1
