@@ -1,6 +1,9 @@
 @echo off
 setlocal enabledelayedexpansion
 
+REM Garante que roda sempre na pasta do proprio script
+cd /d "%~dp0"
+
 echo ========================================
 echo      Audio Cleaner - Setup Automatico
 echo ========================================
