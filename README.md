@@ -1,77 +1,83 @@
 # 🎙️ Audio Cleaner
 
-Remove vícios de linguagem em tempo real durante aulas ou reuniões online, interceptando o áudio do browser antes de chegar nos seus fones/speakers.
+Remove vícios de linguagem em tempo real durante aulas ou reuniões online — intercepta o áudio do browser, detecta as palavras configuradas e as silencia antes de chegar nos seus fones.
 
-## Como funciona
+> Desenvolvido com Python + [faster-whisper](https://github.com/SYSTRAN/faster-whisper) + VB-Audio Virtual Cable.
+
+---
+
+## ✨ Como funciona
 
 ```
 Browser → VB-Audio Virtual Cable → Audio Cleaner → Fones/Speakers
-                                        ↓
-                               Whisper (STT local)
-                                        ↓
-                          Detecta e silencia vícios
+                                         ↓
+                                Whisper (100% local)
+                                         ↓
+                           Detecta e silencia os vícios
 ```
 
-O áudio é capturado com ~2 segundos de atraso, transcrito localmente com o modelo Whisper e as palavras configuradas como vícios são silenciadas antes de chegar ao ouvido.
+- Processamento **100% local** — sem nuvem, sem custo, sem internet
+- Detecta automaticamente GPU NVIDIA (CUDA) — usa CPU como fallback
+- Atraso de ~2 segundos (necessário para transcrever antes de tocar)
 
 ---
 
-## Requisitos
+## 🖥️ Requisitos
 
 - Windows 10/11
-- Python 3.8+
+- Python 3.8+ → [python.org/downloads](https://python.org/downloads) *(marque "Add Python to PATH")*
 - [VB-Audio Virtual Cable](https://vb-audio.com/Cable/) (gratuito)
-- GPU NVIDIA (opcional — usa CPU automaticamente se não disponível)
+- GPU NVIDIA opcional (mais rápido, mas não obrigatório)
 
 ---
 
-## Instalação
+## 🚀 Instalação
 
-**1. Clone o repositório**
+**1. Clone ou baixe o projeto**
 ```bash
 git clone https://github.com/olympiorenno/audio-cleaner.git
 cd audio-cleaner
 ```
+Ou clique em **Code → Download ZIP** e extraia.
 
 **2. Instale as dependências**
-```bash
-pip install faster-whisper sounddevice numpy
-```
+
+Dê dois cliques em **`install.bat`** — ele instala tudo automaticamente.
 
 **3. Instale o VB-Audio Virtual Cable**
 - Baixe em [vb-audio.com/Cable](https://vb-audio.com/Cable/)
-- Execute `VBCABLE_Setup_x64.exe` como administrador
+- Execute `VBCABLE_Setup_x64.exe` como **Administrador**
 - Reinicie o PC
 
 ---
 
-## Como usar
+## ▶️ Como usar
 
 **1. Configure o browser**
-- Vá em `Configurações do Windows → Som → Mixer de volume`
+- `Configurações do Windows → Som → Mixer de volume`
 - Mude a saída do seu browser para **"CABLE Input (VB-Audio Virtual Cable)"**
 
-**2. Execute o script**
+**2. Inicie o Audio Cleaner**
 
-Dê dois cliques em `run.bat`
+Dê dois cliques em **`run.bat`**
 
-ou pelo terminal:
-```bash
-python audio_cleaner.py
+**3. Assista normalmente**
+- O áudio limpo chegará nos seus fones com ~2s de atraso
+- O terminal mostrará cada vício removido em tempo real:
 ```
-
-**3. Assista a aula normalmente**
-- O áudio limpo chegará nos seus fones automaticamente
-- O terminal mostrará cada vício removido em tempo real
+  [-] 'né' 0.22s  [0.9→1.1]
+  [-] 'é' 0.64s  [0.0→0.6]
+[Status] Vícios removidos: 12
+```
 
 ---
 
-## Configuração
+## ⚙️ Configuração
 
-Edite as variáveis no topo do `audio_cleaner.py`:
+Edite o topo do `audio_cleaner.py`:
 
 ```python
-# Vícios a remover
+# Palavras a remover
 TICS = [
     "né", "né?", "certo", "então", "tipo", ...
 ]
@@ -79,35 +85,26 @@ TICS = [
 # "é" longo (hesitação): remove se durar mais que X segundos
 E_LONGO_MIN_SEGUNDOS = 0.4
 
-# Tamanho da janela de processamento (segundos de atraso)
-CHUNK_SECONDS = 2.0
+# Modelo Whisper: "tiny" (leve) | "base" | "small" (preciso)
+WHISPER_MODEL = "tiny"
 ```
 
----
+### Modelos disponíveis
 
-## GPU vs CPU
-
-O script detecta automaticamente se há GPU NVIDIA disponível:
-
-| Hardware | Velocidade | Modelo recomendado |
-|----------|------------|-------------------|
-| GPU NVIDIA (CUDA) | Rápido | `base` ou `small` |
-| CPU | Moderado | `tiny` |
-
-Para trocar o modelo, altere `WHISPER_MODEL` no script.
+| Modelo | Velocidade | Precisão | Recomendado para |
+|--------|------------|----------|-----------------|
+| `tiny` | ⚡⚡⚡ | ⭐⭐ | CPU |
+| `base` | ⚡⚡ | ⭐⭐⭐ | GPU |
+| `small`| ⚡ | ⭐⭐⭐⭐ | GPU potente |
 
 ---
 
-## Dependências
+## 🤝 Contribuindo
 
-| Pacote | Uso |
-|--------|-----|
-| [faster-whisper](https://github.com/SYSTRAN/faster-whisper) | Transcrição de fala (STT) |
-| [sounddevice](https://python-sounddevice.readthedocs.io/) | Captura e reprodução de áudio |
-| [numpy](https://numpy.org/) | Processamento de áudio |
+Veja [CONTRIBUTING.md](CONTRIBUTING.md) para ideias de melhorias e como enviar um Pull Request.
 
 ---
 
-## Licença
+## 📄 Licença
 
-MIT
+MIT — use, modifique e distribua à vontade.
