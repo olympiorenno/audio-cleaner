@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.1.4-debug"
+VERSION = "1.1.5"
 
 import os
 import warnings
@@ -34,11 +34,11 @@ TICS = [
     "entendeu", "entendeu?", "compreenderam", "pessoal"
 ]
 
-E_LONGO_MIN_SEGUNDOS = 0.2
+E_LONGO_MIN_SEGUNDOS = 0.15
 
 SAMPLE_RATE     = 16000
 CHUNK_SECONDS   = 3.0
-DEBUG_WORDS     = True   # mostra todas as palavras detectadas (mude para False depois)
+DEBUG_WORDS     = False  # True = mostra todas as palavras (para diagnostico)
 WHISPER_MODEL    = "tiny"
 WHISPER_LANGUAGE = "pt"
 
@@ -174,6 +174,7 @@ class AudioCleaner:
         t_inicio = time.time()
         executor = ThreadPoolExecutor(max_workers=2)
         counter = [0]
+        self._counter = counter  # referencia para status
 
         while self.running:
             while len(buf) < chunk_size and self.running:
@@ -259,7 +260,8 @@ class AudioCleaner:
             try:
                 while True:
                     time.sleep(5)
-                    print(f"[Status] Vícios removidos: {self.tics_removed}")
+                    n = self._counter[0] if hasattr(self, '_counter') else self.tics_removed
+                    print(f"[Status] Vícios removidos: {n}")
             except KeyboardInterrupt:
                 print(f"\nEncerrando... Total: {self.tics_removed} vícios removidos.")
                 self.running = False
