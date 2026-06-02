@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.1.3"
+VERSION = "1.1.4-debug"
 
 import os
 import warnings
@@ -38,6 +38,7 @@ E_LONGO_MIN_SEGUNDOS = 0.2
 
 SAMPLE_RATE     = 16000
 CHUNK_SECONDS   = 3.0
+DEBUG_WORDS     = True   # mostra todas as palavras detectadas (mude para False depois)
 WHISPER_MODEL    = "tiny"
 WHISPER_LANGUAGE = "pt"
 
@@ -144,10 +145,12 @@ def transcreve_e_muta(chunk, tics_counter):
         if seg.words:
             for word in seg.words:
                 dur = word.end - word.start
+                if DEBUG_WORDS:
+                    print(f"  [w] '{word.word.strip()}' {dur:.2f}s")
                 if is_tic(word.word, dur):
                     chunk = mute_segment(chunk, word.start, word.end)
                     tics_counter[0] += 1
-                    print(f"  [-] '{word.word.strip()}' {dur:.2f}s")
+                    print(f"  [-] '{word.word.strip()}' {dur:.2f}s  <<< REMOVIDO")
     return chunk
 
 
