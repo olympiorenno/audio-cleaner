@@ -106,6 +106,16 @@ def install_dependencies():
     log("  Dependências instaladas!")
 
 
+def download_whisper_model():
+    log("  Baixando modelo Whisper tiny (~75MB)...")
+    log("  (isso evita espera na primeira vez que usar)")
+    subprocess.run([
+        "python", "-c",
+        "from faster_whisper import WhisperModel; WhisperModel('tiny', device='cpu', compute_type='int8')"
+    ], check=True)
+    log("  Modelo Whisper baixado!")
+
+
 def create_shortcut():
     # Pega o caminho real do Desktop (funciona mesmo com OneDrive)
     result = subprocess.run(
@@ -162,8 +172,12 @@ def main():
     log("\n[4/5] Instalando dependências...")
     install_dependencies()
 
-    # 5. Atalho
-    log("\n[5/5] Criando atalho no Desktop...")
+    # 5. Baixa modelo Whisper
+    log("\n[5/6] Baixando modelo de IA (Whisper)...")
+    download_whisper_model()
+
+    # 6. Atalho
+    log("\n[6/6] Criando atalho no Desktop...")
     create_shortcut()
 
     print()
