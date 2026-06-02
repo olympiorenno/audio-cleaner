@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.1.2"
+VERSION = "1.1.3"
 
 import os
 import warnings
@@ -34,7 +34,7 @@ TICS = [
     "entendeu", "entendeu?", "compreenderam", "pessoal"
 ]
 
-E_LONGO_MIN_SEGUNDOS = 0.4
+E_LONGO_MIN_SEGUNDOS = 0.2
 
 SAMPLE_RATE     = 16000
 CHUNK_SECONDS   = 3.0
@@ -113,8 +113,8 @@ def select_devices():
 
 
 def is_tic(word: str, duration: float = 0.0) -> bool:
-    w = word.strip().lower().rstrip(".,!?;:")
-    if w in ("é", "e", "ee", "éé", "ée", "e..."):
+    w = word.strip().lower().rstrip(".,!?;:-")
+    if w in ("é", "e", "ee", "éé", "ée", "e...", "é...", "eee", "ééé", "eh"):
         return duration >= E_LONGO_MIN_SEGUNDOS
     return w in [t.lower() for t in TICS]
 
