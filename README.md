@@ -36,22 +36,21 @@ Browser → VB-Audio Virtual Cable → Audio Cleaner → Fones/Speakers
 **1. Instale o Python**
 - Baixe em [python.org/downloads](https://python.org/downloads)
 - ⚠️ Marque **"Add Python to PATH"** durante a instalação
-- Após instalar, vá em `Configurações → Aplicativos → Aliases de execução do aplicativo` e **desative** `python.exe` e `python3.exe` da Microsoft Store
 
-**2. Instale o VB-Audio Virtual Cable**
-- Baixe em [vb-audio.com/Cable](https://vb-audio.com/Cable/)
-- Execute `VBCABLE_Setup_x64.exe` como **Administrador**
-- **Reinicie o PC**
-
-**3. Baixe o projeto**
+**2. Baixe o projeto**
 ```bash
 git clone https://github.com/olympiorenno/audio-cleaner.git
 ```
 Ou clique em **Code → Download ZIP** e extraia.
 
-**4. Instale as dependências**
+**3. Execute o setup**
 
-Dê dois cliques em **`install.bat`** — ele instala tudo automaticamente.
+Dê dois cliques em **`setup.bat`** — ele faz o resto automaticamente:
+- ✅ Desativa o alias Python da Microsoft Store
+- ✅ Baixa e instala o VB-Audio Virtual Cable
+- ✅ Instala todas as dependências Python
+
+**4. Reinicie o PC** e pronto!
 
 ---
 
