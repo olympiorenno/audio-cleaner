@@ -107,11 +107,15 @@ def install_dependencies():
 
 
 def create_shortcut():
-    desktop  = os.path.join(os.environ["USERPROFILE"], "Desktop")
+    # Pega o caminho real do Desktop (funciona mesmo com OneDrive)
+    result = subprocess.run(
+        ["powershell", "-Command", "[Environment]::GetFolderPath('Desktop')"],
+        capture_output=True, text=True
+    )
+    desktop  = result.stdout.strip()
     shortcut = os.path.join(desktop, "Audio Cleaner.lnk")
     target   = os.path.join(INSTALL_DIR, "run.bat")
 
-    # Usa script temporário para evitar problemas com aspas/barras no PowerShell
     ps_script = os.path.join(tempfile.gettempdir(), "create_shortcut.ps1")
     with open(ps_script, "w", encoding="utf-8") as f:
         f.write(f'$ws = New-Object -ComObject WScript.Shell\n')
@@ -122,7 +126,7 @@ def create_shortcut():
         f.write(f'$s.Save()\n')
 
     subprocess.run(["powershell", "-ExecutionPolicy", "Bypass", "-File", ps_script], check=True)
-    log("  Atalho criado no Desktop!")
+    log(f"  Atalho criado em: {shortcut}")
 
 
 def main():
