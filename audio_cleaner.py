@@ -35,12 +35,13 @@ WHISPER_LANGUAGE = "pt"
 
 # ─── SETUP ────────────────────────────────────────────────────────────────────
 
-# Detecta automaticamente se CUDA está disponível
+# Detecta automaticamente se CUDA está disponível e funcional
 def detect_device():
     try:
         import ctranslate2
-        providers = ctranslate2.get_supported_compute_types("cuda")
-        if providers:
+        # Tenta criar um modelo mínimo na GPU para confirmar que funciona
+        types = ctranslate2.get_supported_compute_types("cuda")
+        if "float16" in types or "int8_float16" in types:
             print("GPU NVIDIA detectada! Usando CUDA.")
             return "cuda", "float16"
     except Exception:

@@ -12,6 +12,10 @@ IF %ERRORLEVEL% NEQ 0 (
     echo Instale o Python em: https://python.org/downloads
     echo IMPORTANTE: marque "Add Python to PATH" durante a instalacao.
     echo.
+    echo Apos instalar, va em:
+    echo Configuracoes ^> Aplicativos ^> Aliases de execucao do aplicativo
+    echo e DESATIVE os aliases "python.exe" e "python3.exe" da Microsoft Store.
+    echo.
     pause
     exit /b 1
 )
