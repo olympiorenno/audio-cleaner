@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.1.1"
+VERSION = "1.1.2"
 
 import os
 import warnings
@@ -71,8 +71,7 @@ import threading as _threading
 
 _warmup_done = False
 def _spinner():
-    import sys
-    chars = ["⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"]
+    chars = ["|", "/", "-", "\\"]
     i = 0
     while not _warmup_done:
         print(f"\r  {chars[i % len(chars)]} aguarde...", end="", flush=True)
