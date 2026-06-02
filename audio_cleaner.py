@@ -120,12 +120,22 @@ class AudioCleaner:
     def process_loop(self):
         chunk_size = int(CHUNK_SECONDS * SAMPLE_RATE)
         buf = np.array([], dtype=np.float32)
+        audio_recebido = False
+        t_inicio = time.time()
 
         while self.running:
             while len(buf) < chunk_size and self.running:
                 try:
-                    buf = np.concatenate([buf, self.raw_queue.get(timeout=0.1)])
+                    chunk = self.raw_queue.get(timeout=0.1)
+                    if not audio_recebido:
+                        audio_recebido = True
+                        print("Audio recebido! Processando...\n")
+                    buf = np.concatenate([buf, chunk])
                 except queue.Empty:
+                    if not audio_recebido and (time.time() - t_inicio) > 10:
+                        print("[AVISO] Nenhum audio recebido apos 10s.")
+                        print("  Verifique se o browser esta usando 'CABLE Input' como saida.")
+                        t_inicio = time.time()  # reseta para nao spammar
                     continue
 
             if not self.running:
