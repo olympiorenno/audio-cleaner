@@ -54,19 +54,26 @@ def python_installed():
     return shutil.which("python") is not None
 
 
+def download_with_progress(url, dest, label):
+    def progress(count, block, total):
+        pct = min(int(count * block * 100 / total), 100)
+        print(f"\r  {label}: {pct}%", end="", flush=True)
+    urllib.request.urlretrieve(url, dest, reporthook=progress)
+    print()  # nova linha após 100%
+
+
 def install_python():
     log("  Baixando Python 3.13...")
     installer = os.path.join(tempfile.gettempdir(), "python_installer.exe")
-    urllib.request.urlretrieve(PYTHON_URL, installer)
-    log("  Instalando Python (aguarde)...")
+    download_with_progress(PYTHON_URL, installer, "Baixando Python")
+    log("  Instalando Python (pode demorar 1-2 min)...")
     subprocess.run([installer, "/quiet", "InstallAllUsers=0", "PrependPath=1"], check=True)
     log("  Python instalado!")
 
 
 def install_vbcable():
-    log("  Baixando VB-Audio Virtual Cable...")
     zip_path = os.path.join(tempfile.gettempdir(), "vbcable.zip")
-    urllib.request.urlretrieve(VBCABLE_URL, zip_path)
+    download_with_progress(VBCABLE_URL, zip_path, "Baixando VB-Cable")
     extract_path = os.path.join(tempfile.gettempdir(), "vbcable")
     with zipfile.ZipFile(zip_path, "r") as z:
         z.extractall(extract_path)
@@ -77,9 +84,8 @@ def install_vbcable():
 
 
 def download_app():
-    log("  Baixando Audio Cleaner...")
     zip_path = os.path.join(tempfile.gettempdir(), "audiocleaner.zip")
-    urllib.request.urlretrieve(REPO_URL, zip_path)
+    download_with_progress(REPO_URL, zip_path, "Baixando Audio Cleaner")
 
     extract_path = os.path.join(tempfile.gettempdir(), "audiocleaner_src")
     with zipfile.ZipFile(zip_path, "r") as z:
@@ -93,9 +99,9 @@ def download_app():
 
 
 def install_dependencies():
-    log("  Instalando dependências Python...")
+    log("  Instalando dependências Python (pode demorar 2-3 min)...")
     req = os.path.join(INSTALL_DIR, "requirements.txt")
-    subprocess.run(["python", "-m", "pip", "install", "-r", req], check=True)
+    subprocess.run(["python", "-m", "pip", "install", "-r", req, "--progress-bar", "on"], check=True)
     log("  Dependências instaladas!")
 
 
