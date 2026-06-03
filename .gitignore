@@ -1,7 +1,5 @@
-# Build / distribuição
+# Build intermediário do PyInstaller (não commitar)
 build/
-dist/
-*.spec
 
 # Gravações de teste
 *.wav
