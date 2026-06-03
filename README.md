@@ -1,8 +1,9 @@
 # 🎙️ Audio Cleaner
 
-Remove vícios de linguagem em tempo real durante aulas ou reuniões online — intercepta o áudio do browser, detecta as palavras configuradas e as silencia antes de chegar nos seus fones.
+Remove vícios de linguagem em tempo real durante aulas ou reuniões online — intercepta o áudio do browser via VB-Audio Virtual Cable, detecta as palavras configuradas e as silencia antes de chegar nos seus fones.
 
 > Desenvolvido com Python + [faster-whisper](https://github.com/SYSTRAN/faster-whisper) + VB-Audio Virtual Cable.
+> Processamento **100% local** — sem nuvem, sem custo, sem internet.
 
 ---
 
@@ -16,7 +17,6 @@ Browser → VB-Audio Virtual Cable → Audio Cleaner → Fones/Speakers
                            Detecta e silencia os vícios
 ```
 
-- Processamento **100% local** — sem nuvem, sem custo, sem internet
 - Detecta automaticamente GPU NVIDIA (CUDA) — usa CPU como fallback
 - Atraso de ~2 segundos (necessário para transcrever antes de tocar)
 
@@ -31,19 +31,32 @@ Browser → VB-Audio Virtual Cable → Audio Cleaner → Fones/Speakers
 
 ---
 
-## 🚀 Instalação
+## 🚀 Instalação rápida (recomendado)
 
-**Baixe e execute o instalador:**
+Baixe e execute o instalador — ele faz **tudo automaticamente**:
 
-👉 [AudioCleaner-Setup.exe](https://github.com/olympiorenno/audio-cleaner/raw/main/AudioCleaner-Setup.exe)
+👉 [AudioCleaner-Setup.exe](https://github.com/olympiorenno/audio-cleaner/raw/main/dist/AudioCleaner-Setup.exe)
 
-O instalador faz **tudo automaticamente**:
-- ✅ Instala o Python
+O que o instalador faz:
+- ✅ Verifica/instala Python
 - ✅ Baixa e instala o VB-Audio Virtual Cable
-- ✅ Instala todas as dependências
+- ✅ Instala todas as dependências Python
+- ✅ Baixa o modelo Whisper (~75 MB)
 - ✅ Cria atalho **Audio Cleaner** no Desktop
 
 Após instalar: **reinicie o PC** e clique no atalho.
+
+---
+
+## 🛠️ Instalação manual (para desenvolvedores)
+
+```bash
+git clone https://github.com/olympiorenno/audio-cleaner.git
+cd audio-cleaner
+pip install -r requirements.txt
+```
+
+Instale o [VB-Audio Virtual Cable](https://vb-audio.com/Cable/) manualmente e reinicie o PC.
 
 ---
 
@@ -55,16 +68,19 @@ Após instalar: **reinicie o PC** e clique no atalho.
 
 **2. Inicie o Audio Cleaner**
 
-Dê dois cliques em **`run.bat`**
+Dê dois cliques em **`run.bat`** (ou no atalho do Desktop)
 
 **3. Assista normalmente**
 - O áudio limpo chegará nos seus fones com ~2s de atraso
 - O terminal mostrará cada vício removido em tempo real:
+
 ```
-  [-] 'né' 0.22s  [0.9→1.1]
-  [-] 'é' 0.64s  [0.0→0.6]
+  [-] 'né' 0.22s  <<< REMOVIDO
+  [-] 'é' 0.64s   <<< REMOVIDO
 [Status] Vícios removidos: 12
 ```
+
+Pressione **Ctrl+C** para encerrar.
 
 ---
 
@@ -75,7 +91,10 @@ Edite o topo do `audio_cleaner.py`:
 ```python
 # Palavras a remover
 TICS = [
-    "né", "né?", "certo", "então", "tipo", ...
+    "né", "né?",
+    "então", "então,",
+    "pessoal", "pessoal,",
+    "ok", "ok?",
 ]
 
 # "é" longo (hesitação): remove se durar mais que X segundos

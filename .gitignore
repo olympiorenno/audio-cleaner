@@ -1,0 +1,25 @@
+# Build / distribuição
+build/
+dist/
+*.spec
+
+# Gravações de teste
+*.wav
+*.mp3
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Modelos Whisper (baixados automaticamente)
+models/
+
+# Ambiente virtual
+venv/
+.venv/
+
+# IDEs
+.vscode/
+.idea/
