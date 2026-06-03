@@ -1,5 +1,15 @@
 # Como Contribuir
 
+## 🔗 Projetos relacionados
+
+| Projeto | Descrição |
+|---------|-----------|
+| [audio-cleaner](https://github.com/olympiorenno/audio-cleaner) | **Este repositório** — usa VB-Audio Virtual Cable + Whisper |
+| [audio_cleaner_extension](https://github.com/olympiorenno/audio_cleaner_extension) | Versão com extensão Chrome — sem VB-Cable, funciona direto no browser via WebSocket |
+| [audio-cleaner-keyword](https://github.com/olympiorenno/audio-cleaner-keyword) | Versão leve — detecta vícios por palavras-chave sem Whisper, menor consumo de CPU |
+
+---
+
 Obrigado pelo interesse! Toda contribuição é bem-vinda — desde correções de bug até novas funcionalidades.
 
 ---
