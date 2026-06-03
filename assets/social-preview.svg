@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <linearGradient id="mic" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e94560"/>
+      <stop offset="100%" style="stop-color:#c23152"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Fundo -->
+  <rect width="1280" height="640" fill="url(#bg)"/>
+
+  <!-- Grade sutil de pontos -->
+  <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="20" cy="20" r="1" fill="white" fill-opacity="0.04"/>
+  </pattern>
+  <rect width="1280" height="640" fill="url(#dots)"/>
+
+  <!-- Ondas decorativas à esquerda -->
+  <path d="M 80 320 Q 110 240 140 320 Q 170 400 200 320" fill="none" stroke="#e94560" stroke-width="4" stroke-opacity="0.3" stroke-linecap="round"/>
+  <path d="M 40 320 Q 90 200 140 320 Q 190 440 240 320" fill="none" stroke="#e94560" stroke-width="3" stroke-opacity="0.15" stroke-linecap="round"/>
+  <path d="M 0 320 Q 70 160 140 320 Q 210 480 280 320" fill="none" stroke="#e94560" stroke-width="2" stroke-opacity="0.08" stroke-linecap="round"/>
+
+  <!-- Ondas decorativas à direita -->
+  <path d="M 1200 320 Q 1170 240 1140 320 Q 1110 400 1080 320" fill="none" stroke="#e94560" stroke-width="4" stroke-opacity="0.3" stroke-linecap="round"/>
+  <path d="M 1240 320 Q 1190 200 1140 320 Q 1090 440 1040 320" fill="none" stroke="#e94560" stroke-width="3" stroke-opacity="0.15" stroke-linecap="round"/>
+  <path d="M 1280 320 Q 1210 160 1140 320 Q 1070 480 1000 320" fill="none" stroke="#e94560" stroke-width="2" stroke-opacity="0.08" stroke-linecap="round"/>
+
+  <!-- Microfone -->
+  <rect x="580" y="170" width="120" height="200" rx="60" ry="60" fill="url(#mic)"/>
+  <rect x="600" y="190" width="34" height="90" rx="17" fill="white" fill-opacity="0.12"/>
+  <path d="M 530 360 Q 530 440 640 440 Q 750 440 750 360" fill="none" stroke="#e94560" stroke-width="10" stroke-linecap="round"/>
+  <line x1="640" y1="440" x2="640" y2="490" stroke="#e94560" stroke-width="10" stroke-linecap="round"/>
+  <line x1="590" y1="490" x2="690" y2="490" stroke="#e94560" stroke-width="10" stroke-linecap="round"/>
+
+  <!-- X verde (símbolo de limpeza) -->
+  <line x1="730" y1="155" x2="790" y2="215" stroke="#4ecca3" stroke-width="10" stroke-linecap="round"/>
+  <line x1="790" y1="155" x2="730" y2="215" stroke="#4ecca3" stroke-width="10" stroke-linecap="round"/>
+
+  <!-- Título -->
+  <text x="640" y="570" font-family="'Segoe UI', Arial, sans-serif" font-size="72" font-weight="700" fill="white" text-anchor="middle" letter-spacing="-1">Audio Cleaner</text>
+
+  <!-- Subtítulo -->
+  <text x="640" y="615" font-family="'Segoe UI', Arial, sans-serif" font-size="28" fill="#e94560" text-anchor="middle" letter-spacing="2">Remove vícios de linguagem em tempo real</text>
+</svg>
