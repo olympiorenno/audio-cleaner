@@ -1,5 +1,5 @@
 @echo off
-set HF_HOME=C:\ProgramData\AudioCleaner\models
+set HF_HOME=%PROGRAMDATA%\AudioCleaner\models
 
 REM Mata instancias anteriores para nao sobrepor audio
 taskkill /F /IM python.exe /FI "WINDOWTITLE eq audio_cleaner*" >nul 2>&1

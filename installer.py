@@ -111,8 +111,9 @@ def download_whisper_model():
     log("  (isso evita espera na primeira vez que usar)")
     # Salva em pasta compartilhada para todos os usuarios
     env = os.environ.copy()
-    env["HF_HOME"] = r"C:\ProgramData\AudioCleaner\models"
-    os.makedirs(r"C:\ProgramData\AudioCleaner\models", exist_ok=True)
+    models_dir = os.path.join(os.environ.get("PROGRAMDATA", r"C:\ProgramData"), "AudioCleaner", "models")
+    env["HF_HOME"] = models_dir
+    os.makedirs(models_dir, exist_ok=True)
     subprocess.run([
         "python", "-c",
         "from faster_whisper import WhisperModel; WhisperModel('tiny', device='cpu', compute_type='int8')"

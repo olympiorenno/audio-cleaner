@@ -102,8 +102,6 @@ def select_devices():
     for i, dev in enumerate(devices):
         if input_dev is None and "CABLE Output (VB-Audio Virtual Cable)" in dev["name"] and dev["max_input_channels"] > 0:
             input_dev = i
-        if output_dev is None and "Fones de ouvido" in dev["name"] and dev["max_output_channels"] > 0:
-            output_dev = i
 
     if output_dev is None:
         for i, dev in enumerate(devices):
