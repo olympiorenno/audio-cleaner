@@ -22,57 +22,76 @@ Browser → VB-Audio Virtual Cable → Audio Cleaner → Fones/Speakers
 
 ---
 
-## 🖥️ Requisitos
+## 🚀 Instalação
 
-- Windows 10/11
-- Python 3.8+ → [python.org/downloads](https://python.org/downloads)
-- [VB-Audio Virtual Cable](https://vb-audio.com/Cable/) (gratuito)
-- GPU NVIDIA opcional (mais rápido, mas não obrigatório)
+Escolha a opção que se encaixa melhor:
 
 ---
 
-## 🚀 Instalação rápida (recomendado)
+### Opção 1 — Instalador automático (recomendado)
 
-Baixe e execute o instalador — ele faz **tudo automaticamente**:
+> Ideal para quem só quer usar, sem configurar nada.
 
-👉 [AudioCleaner-Setup.exe](https://github.com/olympiorenno/audio-cleaner/raw/main/dist/AudioCleaner-Setup.exe)
+**Requisitos:** Windows 10/11 com acesso à internet.
 
-O que o instalador faz:
-- ✅ Verifica/instala Python
-- ✅ Baixa e instala o VB-Audio Virtual Cable
-- ✅ Instala todas as dependências Python
-- ✅ Baixa o modelo Whisper (~75 MB)
-- ✅ Cria atalho **Audio Cleaner** no Desktop
+1. Baixe o instalador:
 
-Após instalar: **reinicie o PC** e clique no atalho.
+   👉 **[AudioCleaner-Setup.exe](https://github.com/olympiorenno/audio-cleaner/raw/main/dist/AudioCleaner-Setup.exe)**
+
+2. Clique duas vezes e aguarde — ele instala tudo automaticamente:
+   - Python
+   - VB-Audio Virtual Cable (driver de áudio virtual)
+   - Dependências Python
+   - Modelo de IA Whisper (~75 MB)
+   - Atalho **Audio Cleaner** no Desktop
+
+3. **Reinicie o PC** ao final.
 
 ---
 
-## 🛠️ Instalação manual (para desenvolvedores)
+### Opção 2 — Setup manual (para quem prefere controle)
 
-```bash
-git clone https://github.com/olympiorenno/audio-cleaner.git
-cd audio-cleaner
-pip install -r requirements.txt
-```
+> Ideal para desenvolvedores ou quem já tem Python instalado.
 
-Instale o [VB-Audio Virtual Cable](https://vb-audio.com/Cable/) manualmente e reinicie o PC.
+**Requisitos:** Windows 10/11, acesso à internet.
+
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/olympiorenno/audio-cleaner.git
+   cd audio-cleaner
+   ```
+
+2. Execute o setup (como Administrador):
+   ```
+   setup.bat
+   ```
+   Ele instala o VB-Audio Virtual Cable, as dependências Python e baixa o modelo Whisper.
+
+3. **Reinicie o PC** ao final.
 
 ---
 
 ## ▶️ Como usar
 
 **1. Configure o browser**
-- `Configurações do Windows → Som → Mixer de volume`
-- Mude a saída do seu browser para **"CABLE Input (VB-Audio Virtual Cable)"**
+
+Abra o Mixer de Volume do Windows:
+`Configurações → Som → Mixer de volume`
+
+Mude a saída do seu browser para **"CABLE Input (VB-Audio Virtual Cable)"**.
+
+> 💡 No Windows 11, você também encontra isso clicando com o botão direito no ícone de som na barra de tarefas.
 
 **2. Inicie o Audio Cleaner**
 
-Dê dois cliques em **`run.bat`** (ou no atalho do Desktop)
+Clique duas vezes no atalho **Audio Cleaner** no Desktop — ou execute diretamente:
+```
+run.bat
+```
 
 **3. Assista normalmente**
-- O áudio limpo chegará nos seus fones com ~2s de atraso
-- O terminal mostrará cada vício removido em tempo real:
+
+O áudio chegará nos seus fones com ~2s de atraso e os vícios serão silenciados:
 
 ```
   [-] 'né' 0.22s  <<< REMOVIDO
@@ -82,11 +101,13 @@ Dê dois cliques em **`run.bat`** (ou no atalho do Desktop)
 
 Pressione **Ctrl+C** para encerrar.
 
+> ⚠️ Sempre use Ctrl+C para fechar — fechar a janela sem parar o script pode deixar o áudio travado.
+
 ---
 
 ## ⚙️ Configuração
 
-Edite o topo do `audio_cleaner.py`:
+Edite o topo do `audio_cleaner.py` para personalizar:
 
 ```python
 # Palavras a remover

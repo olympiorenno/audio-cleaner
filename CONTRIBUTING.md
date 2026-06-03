@@ -22,6 +22,15 @@ Obrigado pelo interesse! Toda contribuição é bem-vinda — desde correções 
 ```bash
 git clone https://github.com/olympiorenno/audio-cleaner.git
 cd audio-cleaner
+```
+
+Execute o setup (instala VB-Cable, dependências e modelo Whisper):
+```
+setup.bat
+```
+
+Ou instale só as dependências manualmente:
+```bash
 pip install -r requirements.txt
 python audio_cleaner.py
 ```
@@ -66,10 +75,10 @@ Abra uma [Issue](https://github.com/olympiorenno/audio-cleaner/issues) com:
 ## 🗂️ Estrutura do projeto
 
 ```
-audio_cleaner.py   — lógica principal (captura, Whisper, mute, playback)
-installer.py       — instalador empacotado como .exe via PyInstaller
-requirements.txt   — dependências Python
-run.bat            — atalho para rodar no Windows
-setup.bat          — setup automático (instala tudo + VB-Cable)
-install.bat        — instala só as dependências Python
+audio_cleaner.py         — lógica principal (captura, Whisper, mute, playback)
+installer.py             — instalador empacotado como .exe via PyInstaller
+AudioCleaner-Setup.spec  — spec do PyInstaller para rebuildar o .exe
+requirements.txt         — dependências Python
+run.bat                  — inicia o Audio Cleaner
+setup.bat                — setup completo (Python + VB-Cable + dependências + Whisper)
 ```
