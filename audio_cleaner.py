@@ -97,21 +97,19 @@ print()
 
 def select_devices():
     devices = sd.query_devices()
-    input_dev, output_dev = None, None
+    input_dev  = None
+    output_dev = sd.default.device[1]  # usa o dispositivo padrao do Windows
 
     for i, dev in enumerate(devices):
-        if input_dev is None and "CABLE Output (VB-Audio Virtual Cable)" in dev["name"] and dev["max_input_channels"] > 0:
+        if "CABLE Output (VB-Audio Virtual Cable)" in dev["name"] and dev["max_input_channels"] > 0:
             input_dev = i
+            break
 
-    if output_dev is None:
-        for i, dev in enumerate(devices):
-            if "Realtek" in dev["name"] and dev["max_output_channels"] > 0:
-                output_dev = i
-                break
-    if output_dev is None:
-        output_dev = sd.default.device[1]
     if input_dev is None:
         input_dev = sd.default.device[0]
+        print("[AVISO] VB-Audio Virtual Cable nao encontrado.")
+        print("        Certifique-se de que o VB-Cable esta instalado e o PC foi reiniciado.")
+        print()
 
     print(f"Entrada : {devices[input_dev]['name']}")
     print(f"Saída   : {devices[output_dev]['name']}\n")
