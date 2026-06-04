@@ -103,8 +103,15 @@ TICS = carregar_tics()
 # ─── INSTANCIA UNICA ──────────────────────────────────────────────────────────
 
 import psutil
+import atexit
 
 LOCK_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".lock")
+
+def _remover_lock():
+    try:
+        os.remove(LOCK_PATH)
+    except OSError:
+        pass
 
 def _verificar_instancia_unica():
     if os.path.exists(LOCK_PATH):
@@ -115,16 +122,15 @@ def _verificar_instancia_unica():
                 print("Audio Cleaner ja esta rodando! Feche a outra janela primeiro.")
                 input("Pressione Enter para sair...")
                 raise SystemExit(0)
+            else:
+                # PID morto sem limpar o lock — remove e continua
+                _remover_lock()
         except (ValueError, OSError):
-            pass  # lock corrompido ou processo morto — ignora
+            _remover_lock()  # lock corrompido — remove e continua
+
     with open(LOCK_PATH, "w") as f:
         f.write(str(os.getpid()))
-
-def _remover_lock():
-    try:
-        os.remove(LOCK_PATH)
-    except OSError:
-        pass
+    atexit.register(_remover_lock)  # garante limpeza mesmo em crash
 
 _verificar_instancia_unica()
 
