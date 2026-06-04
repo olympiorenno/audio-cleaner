@@ -100,6 +100,34 @@ def carregar_tics():
 
 TICS = carregar_tics()
 
+# ─── INSTANCIA UNICA ──────────────────────────────────────────────────────────
+
+import psutil
+
+LOCK_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".lock")
+
+def _verificar_instancia_unica():
+    if os.path.exists(LOCK_PATH):
+        try:
+            with open(LOCK_PATH) as f:
+                pid = int(f.read().strip())
+            if psutil.pid_exists(pid):
+                print("Audio Cleaner ja esta rodando! Feche a outra janela primeiro.")
+                input("Pressione Enter para sair...")
+                raise SystemExit(0)
+        except (ValueError, OSError):
+            pass  # lock corrompido ou processo morto — ignora
+    with open(LOCK_PATH, "w") as f:
+        f.write(str(os.getpid()))
+
+def _remover_lock():
+    try:
+        os.remove(LOCK_PATH)
+    except OSError:
+        pass
+
+_verificar_instancia_unica()
+
 # ─── AUTO-UPDATE ──────────────────────────────────────────────────────────────
 
 VERSION_URL = "https://raw.githubusercontent.com/olympiorenno/audio-cleaner/main/audio_cleaner.py"
@@ -410,5 +438,8 @@ class AudioCleaner:
 
 
 if __name__ == "__main__":
-    AudioCleaner().run()
+    try:
+        AudioCleaner().run()
+    finally:
+        _remover_lock()
 
