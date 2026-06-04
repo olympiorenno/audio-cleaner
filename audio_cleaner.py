@@ -105,7 +105,8 @@ TICS = carregar_tics()
 VERSION_URL = "https://raw.githubusercontent.com/olympiorenno/audio-cleaner/main/audio_cleaner.py"
 UPDATE_URL  = "https://github.com/olympiorenno/audio-cleaner"
 
-def _check_update():
+def check_update():
+    """Verifica atualizacao de forma sincrona, antes de carregar o Whisper."""
     try:
         conteudo = urllib.request.urlopen(VERSION_URL, timeout=5).read().decode("utf-8")
         latest = None
@@ -117,27 +118,30 @@ def _check_update():
         if not latest or latest == VERSION:
             return
 
-        print(f"\n{'='*40}")
+        print(f"{'='*40}")
         print(f"  Nova versao disponivel: v{latest}")
         print(f"  Voce esta usando:        v{VERSION}")
-        print(f"  Deseja atualizar agora? (s/n): ", end="", flush=True)
+        print(f"{'='*40}")
+        resposta = input("  Deseja atualizar agora? (s/n): ").strip().lower()
 
-        resposta = input().strip().lower()
         if resposta == "s":
             destino = os.path.abspath(__file__)
             with open(destino, "w", encoding="utf-8") as f:
                 f.write(conteudo)
-            print(f"  Atualizado! Reinicie o Audio Cleaner para usar v{latest}.")
+            print(f"\n  Atualizado para v{latest}! Reinicie o Audio Cleaner.")
+            input("  Pressione Enter para fechar...")
+            raise SystemExit(0)
         else:
-            print(f"  Atualização ignorada. Continuando com v{VERSION}.")
-        print(f"{'='*40}\n")
+            print(f"  Continuando com v{VERSION}.\n")
 
+    except SystemExit:
+        raise
     except Exception:
         pass  # sem internet ou GitHub fora? ignora silenciosamente
 
-threading.Thread(target=_check_update, daemon=True).start()
-
 # ─── SETUP ────────────────────────────────────────────────────────────────────
+
+check_update()
 
 # Detecta automaticamente se CUDA está disponível e funcional
 def detect_device():
