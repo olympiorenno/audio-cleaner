@@ -25,9 +25,17 @@ import queue
 import time
 import wave
 import os
+import sys
+import platform
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from faster_whisper import WhisperModel
+
+IS_MAC     = platform.system() == "Darwin"
+IS_WINDOWS = platform.system() == "Windows"
+
+# Nome do dispositivo de entrada virtual por OS
+VIRTUAL_INPUT_NAME = "BlackHole 2ch" if IS_MAC else "CABLE Output (VB-Audio Virtual Cable)"
 
 # ─── CONFIGURAÇÕES ────────────────────────────────────────────────────────────
 
@@ -136,7 +144,7 @@ _verificar_instancia_unica()
 
 # ─── AUTO-UPDATE ──────────────────────────────────────────────────────────────
 
-VERSION_URL = "https://raw.githubusercontent.com/olympiorenno/audio-cleaner/main/audio_cleaner.py"
+VERSION_URL = "https://raw.githubusercontent.com/olympiorenno/audio-cleaner/macos/audio_cleaner.py"
 UPDATE_URL  = "https://github.com/olympiorenno/audio-cleaner"
 
 def check_update():
@@ -227,14 +235,19 @@ def select_devices():
     output_dev = sd.default.device[1]  # usa o dispositivo padrao do Windows
 
     for i, dev in enumerate(devices):
-        if "CABLE Output (VB-Audio Virtual Cable)" in dev["name"] and dev["max_input_channels"] > 0:
+        if VIRTUAL_INPUT_NAME in dev["name"] and dev["max_input_channels"] > 0:
             input_dev = i
             break
 
     if input_dev is None:
         input_dev = sd.default.device[0]
-        print("[AVISO] VB-Audio Virtual Cable nao encontrado.")
-        print("        Certifique-se de que o VB-Cable esta instalado e o PC foi reiniciado.")
+        if IS_MAC:
+            print("[AVISO] BlackHole nao encontrado.")
+            print("        Instale com: brew install --cask blackhole-2ch")
+            print("        E reinicie o Mac.")
+        else:
+            print("[AVISO] VB-Audio Virtual Cable nao encontrado.")
+            print("        Certifique-se de que o VB-Cable esta instalado e o PC foi reiniciado.")
         print()
 
     print(f"Entrada : {devices[input_dev]['name']}")
