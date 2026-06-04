@@ -11,7 +11,7 @@ Como usar:
     4. O áudio limpo tocará nos seus speakers normais
 """
 
-VERSION = "1.3.3"
+VERSION = "1.3.2"
 
 import os
 import warnings
