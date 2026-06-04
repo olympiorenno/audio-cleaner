@@ -25,6 +25,7 @@ import queue
 import time
 import wave
 import os
+import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from faster_whisper import WhisperModel
 
@@ -98,6 +99,29 @@ def carregar_tics():
     return tics if tics else TICS_PADRAO
 
 TICS = carregar_tics()
+
+# ─── AUTO-UPDATE ──────────────────────────────────────────────────────────────
+
+VERSION_URL = "https://raw.githubusercontent.com/olympiorenno/audio-cleaner/main/audio_cleaner.py"
+UPDATE_URL  = "https://github.com/olympiorenno/audio-cleaner"
+
+def _check_update():
+    try:
+        req = urllib.request.urlopen(VERSION_URL, timeout=5)
+        for line in req.read().decode("utf-8").splitlines():
+            if line.startswith("VERSION"):
+                latest = line.split('"')[1]
+                if latest != VERSION:
+                    print(f"\n{'='*40}")
+                    print(f"  Nova versao disponivel: v{latest}")
+                    print(f"  Voce esta usando:        v{VERSION}")
+                    print(f"  Baixe em: {UPDATE_URL}")
+                    print(f"{'='*40}\n")
+                break
+    except Exception:
+        pass  # sem internet ou GitHub fora? ignora silenciosamente
+
+threading.Thread(target=_check_update, daemon=True).start()
 
 # ─── SETUP ────────────────────────────────────────────────────────────────────
 
