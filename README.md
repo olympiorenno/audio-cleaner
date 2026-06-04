@@ -107,17 +107,29 @@ Pressione **Ctrl+C** para encerrar.
 
 ## ⚙️ Configuração
 
-Edite o topo do `audio_cleaner.py` para personalizar:
+### Palavras a remover
+
+Na primeira execução, o Audio Cleaner cria automaticamente um arquivo **`config.txt`** na pasta do app. Abra-o no Bloco de Notas e adicione ou remova palavras à vontade — uma por linha:
+
+```
+# Linhas com # são comentários (ignoradas)
+né
+né?
+então
+pessoal
+ok
+
+# Adicione suas próprias:
+tipo
+certo
+entendeu
+```
+
+Salve o arquivo e reinicie o Audio Cleaner para aplicar. Veja o `config.example.txt` para mais exemplos.
+
+### Outros ajustes (no `audio_cleaner.py`)
 
 ```python
-# Palavras a remover
-TICS = [
-    "né", "né?",
-    "então", "então,",
-    "pessoal", "pessoal,",
-    "ok", "ok?",
-]
-
 # "é" longo (hesitação): remove se durar mais que X segundos
 E_LONGO_MIN_SEGUNDOS = 0.4
 
