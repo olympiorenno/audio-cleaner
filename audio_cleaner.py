@@ -120,14 +120,16 @@ def _check_update():
         print(f"\n{'='*40}")
         print(f"  Nova versao disponivel: v{latest}")
         print(f"  Voce esta usando:        v{VERSION}")
-        print(f"  Atualizando automaticamente...")
+        print(f"  Deseja atualizar agora? (s/n): ", end="", flush=True)
 
-        # Salva o novo arquivo substituindo o atual
-        destino = os.path.abspath(__file__)
-        with open(destino, "w", encoding="utf-8") as f:
-            f.write(conteudo)
-
-        print(f"  Atualizado! Reinicie o Audio Cleaner para usar v{latest}.")
+        resposta = input().strip().lower()
+        if resposta == "s":
+            destino = os.path.abspath(__file__)
+            with open(destino, "w", encoding="utf-8") as f:
+                f.write(conteudo)
+            print(f"  Atualizado! Reinicie o Audio Cleaner para usar v{latest}.")
+        else:
+            print(f"  Atualização ignorada. Continuando com v{VERSION}.")
         print(f"{'='*40}\n")
 
     except Exception:
