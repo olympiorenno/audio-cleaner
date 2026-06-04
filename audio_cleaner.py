@@ -30,11 +30,11 @@ from faster_whisper import WhisperModel
 
 # ─── CONFIGURAÇÕES ────────────────────────────────────────────────────────────
 
-TICS = [
-    "né", "né?", "ne", "ne?",  # vicio confirmado
-    "então", "então,",          # vicio no inicio de frase
-    "pessoal", "pessoal,",      # vicio de oratoria
-    "ok", "ok?",                # vicio de confirmacao
+TICS_PADRAO = [
+    "né", "né?", "ne", "ne?",
+    "então", "então,",
+    "pessoal", "pessoal,",
+    "ok", "ok?",
 ]
 
 E_LONGO_MIN_SEGUNDOS = 0.40  # so remove "e/é" genuinamente longo (hesitacao > 0.40s)
@@ -48,6 +48,56 @@ DEBUG_WORDS     = False  # True = mostra todas as palavras (para diagnostico)
 GRAVAR_AUDIO    = False  # True = grava WAVs para analise
 WHISPER_MODEL    = "tiny"
 WHISPER_LANGUAGE = "pt"
+
+# ─── CONFIG.TXT ───────────────────────────────────────────────────────────────
+
+CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.txt")
+
+CONFIG_PADRAO = """\
+# Audio Cleaner - Configuração de vícios de linguagem
+# =====================================================
+# Adicione ou remova palavras à vontade.
+# - Uma palavra por linha
+# - Linhas começando com # são comentários (ignoradas)
+# - Não diferencia maiúsculas/minúsculas
+# - Para remover uma palavra padrão, apague a linha
+
+né
+né?
+ne
+ne?
+então
+então,
+pessoal
+pessoal,
+ok
+ok?
+
+# Exemplos de outras palavras que você pode adicionar:
+# tipo
+# certo
+# entendeu
+# basicamente
+# literalmente
+"""
+
+def carregar_tics():
+    if not os.path.exists(CONFIG_PATH):
+        with open(CONFIG_PATH, "w", encoding="utf-8") as f:
+            f.write(CONFIG_PADRAO)
+        print(f"Arquivo de configuracao criado: {CONFIG_PATH}")
+        print("Edite esse arquivo para adicionar ou remover palavras.\n")
+
+    tics = []
+    with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+        for line in f:
+            palavra = line.strip()
+            if palavra and not palavra.startswith("#"):
+                tics.append(palavra)
+
+    return tics if tics else TICS_PADRAO
+
+TICS = carregar_tics()
 
 # ─── SETUP ────────────────────────────────────────────────────────────────────
 

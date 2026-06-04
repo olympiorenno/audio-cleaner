@@ -1,0 +1,30 @@
+# Audio Cleaner - Configuração de vícios de linguagem
+# =====================================================
+# Este arquivo é um exemplo. O arquivo real é o config.txt
+# (criado automaticamente na primeira execução).
+#
+# Como usar:
+# - Uma palavra por linha
+# - Linhas começando com # são comentários (ignoradas)
+# - Não diferencia maiúsculas/minúsculas
+# - Salve o arquivo e reinicie o Audio Cleaner para aplicar
+
+né
+né?
+ne
+ne?
+então
+então,
+pessoal
+pessoal,
+ok
+ok?
+
+# Outros exemplos:
+# tipo
+# certo
+# entendeu
+# basicamente
+# literalmente
+# tá
+# né não

@@ -1,6 +1,9 @@
 # Build intermediário do PyInstaller (não commitar)
 build/
 
+# Configuracao local do usuario (cada um tem o seu)
+config.txt
+
 # Gravações de teste
 *.wav
 *.mp3
