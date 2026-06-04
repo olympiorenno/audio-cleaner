@@ -107,17 +107,29 @@ UPDATE_URL  = "https://github.com/olympiorenno/audio-cleaner"
 
 def _check_update():
     try:
-        req = urllib.request.urlopen(VERSION_URL, timeout=5)
-        for line in req.read().decode("utf-8").splitlines():
+        conteudo = urllib.request.urlopen(VERSION_URL, timeout=5).read().decode("utf-8")
+        latest = None
+        for line in conteudo.splitlines():
             if line.startswith("VERSION"):
                 latest = line.split('"')[1]
-                if latest != VERSION:
-                    print(f"\n{'='*40}")
-                    print(f"  Nova versao disponivel: v{latest}")
-                    print(f"  Voce esta usando:        v{VERSION}")
-                    print(f"  Baixe em: {UPDATE_URL}")
-                    print(f"{'='*40}\n")
                 break
+
+        if not latest or latest == VERSION:
+            return
+
+        print(f"\n{'='*40}")
+        print(f"  Nova versao disponivel: v{latest}")
+        print(f"  Voce esta usando:        v{VERSION}")
+        print(f"  Atualizando automaticamente...")
+
+        # Salva o novo arquivo substituindo o atual
+        destino = os.path.abspath(__file__)
+        with open(destino, "w", encoding="utf-8") as f:
+            f.write(conteudo)
+
+        print(f"  Atualizado! Reinicie o Audio Cleaner para usar v{latest}.")
+        print(f"{'='*40}\n")
+
     except Exception:
         pass  # sem internet ou GitHub fora? ignora silenciosamente
 
